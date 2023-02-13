@@ -21,7 +21,7 @@ func (s *Server) UpdateBlog(ctx context.Context, in *pb.Blog) (*emptypb.Empty, e
 
 	data := &BlogItem{AuthorID: in.AuthorId, Title: in.Title, Content: in.Content}
 
-	res, err := collection.UpdateOne(
+	res, err := s.collection.UpdateOne(
 		ctx,
 		bson.M{"_id": oid},
 		bson.M{"$set": data},

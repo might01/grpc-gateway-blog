@@ -14,7 +14,7 @@ import (
 func (s *Server) ListBlog(in *emptypb.Empty, stream pb.BlogService_ListBlogServer) error {
 	log.Println("ListBlog was invoked")
 
-	cur, err := collection.Find(context.Background(), primitive.D{})
+	cur, err := s.collection.Find(context.Background(), primitive.D{})
 	if err != nil {
 		return status.Errorf(codes.Internal, fmt.Sprintf("error: %v", err))
 	}
@@ -42,7 +42,7 @@ func (s *Server) ListBlogRepeated(ctx context.Context, in *emptypb.Empty) (*pb.L
 
 	var blogs []*pb.Blog
 
-	cur, err := collection.Find(context.Background(), primitive.D{})
+	cur, err := s.collection.Find(context.Background(), primitive.D{})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("error: %v", err))
 	}

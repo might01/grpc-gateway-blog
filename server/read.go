@@ -21,7 +21,7 @@ func (s *Server) ReadBlog(ctx context.Context, in *pb.BlogId) (*pb.Blog, error) 
 	data := &BlogItem{}
 	filter := bson.M{"_id": oid}
 
-	res := collection.FindOne(ctx, filter)
+	res := s.collection.FindOne(ctx, filter)
 	if err := res.Decode(data); err != nil {
 		return nil, status.Errorf(codes.NotFound, "Cannot find blog with ID provided")
 	}

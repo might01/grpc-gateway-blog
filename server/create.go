@@ -19,7 +19,7 @@ func (s *Server) CreateBlog(ctx context.Context, in *pb.CreatBlogRequest) (*pb.B
 		Content:  in.Content,
 	}
 
-	res, err := collection.InsertOne(ctx, data)
+	res, err := s.collection.InsertOne(ctx, data)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Error: %v", err))
 	}

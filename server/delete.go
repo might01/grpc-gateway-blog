@@ -19,7 +19,7 @@ func (s *Server) DeleteBlog(ctx context.Context, in *pb.BlogId) (*emptypb.Empty,
 		return nil, status.Errorf(codes.InvalidArgument, "Cannot Parse ID")
 	}
 
-	res, err := collection.DeleteOne(ctx, bson.M{"_id": oid})
+	res, err := s.collection.DeleteOne(ctx, bson.M{"_id": oid})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Cannot Delete: %v", err)
 	}

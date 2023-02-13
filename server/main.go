@@ -11,10 +11,11 @@ import (
 	"net"
 )
 
-var collection *mongo.Collection
 var addr = "0.0.0.0:50051"
 
 type Server struct {
+	collection *mongo.Collection
+
 	pb.BlogServiceServer
 }
 
@@ -29,7 +30,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection = client.Database("blogdb").Collection("blog")
+	collection := client.Database("blogdb").Collection("blog")
 
 	lis, err := net.Listen("tcp", addr)
 
@@ -38,9 +39,11 @@ func main() {
 	}
 	defer lis.Close()
 
+	server := &Server{collection: collection}
+
 	log.Printf("Listening at %s\n", addr)
 	s := grpc.NewServer()
-	pb.RegisterBlogServiceServer(s, &Server{})
+	pb.RegisterBlogServiceServer(s, server)
 
 	reflection.Register(s)
 
