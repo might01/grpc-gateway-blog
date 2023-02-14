@@ -1,0 +1,24 @@
+FROM golang:1.19
+
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 && \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2 && \
+    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+
+RUN apt-get update && apt-get install -y zip && \
+    mkdir /opt/protoc && cd /opt/protoc && wget https://github.com/protocolbuffers/protobuf/releases/download/v3.15.8/protoc-3.15.8-linux-x86_64.zip && \
+    unzip -o protoc-3.15.8-linux-x86_64.zip
+
+ENV PATH="$PATH:$(go env GOPATH)/bin"
+
+WORKDIR /app
+
+COPY proto ./proto
+COPY proxy ./proxy
+COPY go.mod ./
+COPY go.sum ./
+RUN /opt/protoc/bin/protoc -Iproto --go_opt=module=bitbucket.com/mightnvi/grpc-blog --go_out=. --go-grpc_opt=module=bitbucket.com/mightnvi/grpc-blog --go-grpc_out=. --grpc-gateway_out=. --grpc-gateway_opt=module=bitbucket.com/mightnvi/grpc-blog proto/*.proto
+
+RUN go mod download
+RUN go build -o bin/proxy ./proxy
+
+CMD [ "/app/bin/proxy" ]

@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
+	"os"
 )
 
 var addr = "0.0.0.0:50051"
@@ -20,7 +21,8 @@ type Server struct {
 }
 
 func main() {
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:root@localhost:27017/"))
+	db := getEnv("MONGO_URI", "localhost:27017")
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:root@" + db + "/"))
 	if err != nil {
 		log.Fatalf("Error while try to initial db con: %v\n", err)
 	}
@@ -50,4 +52,11 @@ func main() {
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
 	}
+}
+
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
 }

@@ -8,12 +8,15 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+	serverURI := getEnv("SERVER_URI", "localhost:50051")
+
 	conn, err := grpc.DialContext(
 		context.Background(),
-		"localhost:50051",
+		serverURI,
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -35,4 +38,11 @@ func main() {
 
 	log.Println("Serving gRPC-Gateway on http://0.0.0.0:8090")
 	log.Fatalln(gwServer.ListenAndServe())
+}
+
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
 }

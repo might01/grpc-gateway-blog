@@ -1,0 +1,23 @@
+FROM golang:1.19
+
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 && \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+
+RUN apt-get update && apt-get install -y zip && \
+    mkdir /opt/protoc && cd /opt/protoc && wget https://github.com/protocolbuffers/protobuf/releases/download/v3.15.8/protoc-3.15.8-linux-x86_64.zip && \
+    unzip -o protoc-3.15.8-linux-x86_64.zip
+
+ENV PATH="$PATH:$(go env GOPATH)/bin"
+
+WORKDIR /app
+
+COPY proto ./proto
+COPY server ./server
+COPY go.mod ./
+COPY go.sum ./
+RUN /opt/protoc/bin/protoc -Iproto --go_opt=module=bitbucket.com/mightnvi/grpc-blog --go_out=. --go-grpc_opt=module=bitbucket.com/mightnvi/grpc-blog --go-grpc_out=. proto/*.proto
+
+RUN go mod download
+RUN go build -o bin/server ./server
+
+CMD [ "/app/bin/server" ]

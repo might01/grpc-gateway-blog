@@ -29,7 +29,7 @@ message ListBlogResponse {
 }
 
 service BlogService {
-  rpc CreateBlog (CreatBlogRequest) returns (BlogId) {
+  rpc Create (CreatBlogRequest) returns (BlogId) {
     option (google.api.http) = {
       post: "/api/v1/blog"
       body: "*"
