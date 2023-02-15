@@ -5,7 +5,10 @@ import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"log"
 	"net/http"
 	"os"
@@ -19,6 +22,7 @@ func main() {
 		serverURI,
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(UnaryClientInterceptor()),
 	)
 	if err != nil {
 		log.Fatalln("Failed to dial server:", err)
@@ -45,4 +49,23 @@ func getEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+func UnaryClientInterceptor() grpc.UnaryClientInterceptor {
+	return func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+		md, ok := metadata.FromOutgoingContext(ctx)
+		if !ok {
+			return status.Errorf(codes.InvalidArgument, "Retrieving metadata is failed")
+		}
+
+		authHeader, ok := md["authorization"]
+		if !ok {
+			return status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
+		}
+		log.Println(authHeader)
+		log.Println(method, req, reply)
+		err := invoker(ctx, method, req, reply, cc, opts...)
+		log.Println("after")
+		return err
+	}
 }
