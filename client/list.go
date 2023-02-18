@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "bitbucket.com/mightnvi/grpc-blog/proto"
+	pb "bitbucket.com/mightnvi/grpc-blog/proto/blog/v1"
 	"context"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"io"

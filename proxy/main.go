@@ -1,7 +1,6 @@
 package main
 
 import (
-	pb "bitbucket.com/mightnvi/grpc-blog/proto"
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -12,25 +11,22 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	pb "bitbucket.com/mightnvi/grpc-blog/proto/blog/v1"
 )
 
 func main() {
 	serverURI := getEnv("SERVER_URI", "localhost:50051")
 
-	conn, err := grpc.DialContext(
-		context.Background(),
-		serverURI,
+	option := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(UnaryClientInterceptor()),
-	)
-	if err != nil {
-		log.Fatalln("Failed to dial server:", err)
 	}
 
 	gwmux := runtime.NewServeMux()
 	// Register Greeter
-	err = pb.RegisterBlogServiceHandler(context.Background(), gwmux, conn)
+	err := pb.RegisterBlogServiceHandlerFromEndpoint(context.Background(), gwmux, serverURI, option)
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)
 	}

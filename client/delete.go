@@ -1,15 +1,16 @@
 package main
 
 import (
-	pb "bitbucket.com/mightnvi/grpc-blog/proto"
 	"context"
 	"log"
+
+	pb "bitbucket.com/mightnvi/grpc-blog/proto/blog/v1"
 )
 
 func deleteBlog(c pb.BlogServiceClient, id string) {
 	log.Printf("deleteBlog was invoked with %s\n", id)
 
-	_, err := c.DeleteBlog(context.Background(), &pb.BlogId{Id: id})
+	_, err := c.DeleteBlog(context.Background(), &pb.DeleteBlogRequest{Id: id})
 	if err != nil {
 		log.Fatalf("error with %v\n", err)
 	}

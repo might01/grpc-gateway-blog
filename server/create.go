@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "bitbucket.com/mightnvi/grpc-blog/proto"
+	pb "bitbucket.com/mightnvi/grpc-blog/proto/blog/v1"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-func (s *Server) CreateBlog(ctx context.Context, in *pb.CreatBlogRequest) (*pb.BlogId, error) {
+func (s *Server) CreateBlog(ctx context.Context, in *pb.CreateBlogRequest) (*pb.CreateBlogResponse, error) {
 	log.Printf("CreateBlog was invoked with %v\n", in)
 
 	data := BlogItem{
@@ -29,7 +29,7 @@ func (s *Server) CreateBlog(ctx context.Context, in *pb.CreatBlogRequest) (*pb.B
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Cannot convert to oid: %v", err))
 	}
 
-	return &pb.BlogId{
+	return &pb.CreateBlogResponse{
 		Id: oid.Hex(),
 	}, nil
 }

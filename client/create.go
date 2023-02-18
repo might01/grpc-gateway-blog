@@ -1,15 +1,16 @@
 package main
 
 import (
-	pb "bitbucket.com/mightnvi/grpc-blog/proto"
 	"context"
 	"log"
+
+	pb "bitbucket.com/mightnvi/grpc-blog/proto/blog/v1"
 )
 
 func createBlog(c pb.BlogServiceClient) string {
 	log.Println("createBlog was invoked")
 
-	blog := &pb.CreatBlogRequest{AuthorId: "test", Title: "test_title", Content: "test_content"}
+	blog := &pb.CreateBlogRequest{AuthorId: "test", Title: "test_title", Content: "test_content"}
 	res, err := c.CreateBlog(context.Background(), blog)
 	if err != nil {
 		log.Fatalf("error with %v\n", err)

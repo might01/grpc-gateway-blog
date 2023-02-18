@@ -42,7 +42,7 @@ endif
 .DEFAULT_GOAL := help
 
 build:
-	protoc -I${PROTO_DIR} --go_opt=module=${PACKAGE} --go_out=. --go-grpc_opt=module=${PACKAGE} --go-grpc_out=. --grpc-gateway_out=. --grpc-gateway_opt=module=${PACKAGE} ${PROTO_DIR}/*.proto
+	buf generate
 	go build -o ${BIN_DIR}/${SERVER_BIN} ./${SERVER_DIR}
 	go build -o ${BIN_DIR}/${CLIENT_BIN} ./${CLIENT_DIR}
 	go build -o ${BIN_DIR}/${PROXY_BIN} ./${PROXY_DIR}

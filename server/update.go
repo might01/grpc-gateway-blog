@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "bitbucket.com/mightnvi/grpc-blog/proto"
+	pb "bitbucket.com/mightnvi/grpc-blog/proto/blog/v1"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -11,7 +11,7 @@ import (
 	"log"
 )
 
-func (s *Server) UpdateBlog(ctx context.Context, in *pb.Blog) (*emptypb.Empty, error) {
+func (s *Server) UpdateBlog(ctx context.Context, in *pb.UpdateBlogRequest) (*emptypb.Empty, error) {
 	log.Printf("ReadBlog was invoked with %v\n", in)
 
 	oid, err := primitive.ObjectIDFromHex(in.Id)

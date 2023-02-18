@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package blog.v1;
+
+option go_package= "bitbucket.com/mightnvi/grpc-blog/proto";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+message CreateBlogRequest {
+  string title = 1;
+  string author_id = 2;
+  string content = 3;
+}
+
+message CreateBlogResponse {
+  string id = 1;
+}
+
+message ReadBlogRequest {
+  string id = 1;
+}
+
+message ReadBlogResponse {
+  string id = 1;
+  string author_id = 2;
+  string title = 3;
+  string content = 4;
+}
+
+message UpdateBlogRequest {
+  string id = 1;
+  string author_id = 2;
+  string title = 3;
+  string content = 4;
+}
+
+message DeleteBlogRequest {
+  string id = 1;
+}
+
+message ListBlogRepeatedResponse {
+  repeated Blog blogs = 1;
+}
+
+message  ListBlogResponse {
+  string id = 1;
+  string author_id = 2;
+  string title = 3;
+  string content = 4;
+}
+
+message Blog {
+  string id = 1;
+  string author_id = 2;
+  string title = 3;
+  string content = 4;
+}
+
+service BlogService {
+  rpc CreateBlog (CreateBlogRequest) returns (CreateBlogResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/blog"
+      body: "*"
+    };
+  };
+  rpc ReadBlog (ReadBlogRequest) returns (ReadBlogResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/blog/{id}"
+    };
+  };
+  rpc UpdateBlog (UpdateBlogRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/api/v1/blog/{id}"
+      body: "*"
+    };
+  };
+  rpc DeleteBlog (DeleteBlogRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/api/v1/blog/{id}"
+    };
+  };
+  rpc ListBlog (google.protobuf.Empty) returns (stream ListBlogResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/blogs/stream"
+    };
+  };
+  rpc ListBlogRepeated (google.protobuf.Empty) returns (ListBlogRepeatedResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/blogs"
+    };
+  };
+
+}

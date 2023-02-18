@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "bitbucket.com/mightnvi/grpc-blog/proto"
+	pb "bitbucket.com/mightnvi/grpc-blog/proto/blog/v1"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,7 +27,12 @@ func (s *Server) ListBlog(in *emptypb.Empty, stream pb.BlogService_ListBlogServe
 			return status.Errorf(codes.Internal, fmt.Sprintf("error: %v", err))
 		}
 
-		stream.Send(documentToBlog(data))
+		stream.Send(&pb.ListBlogResponse{
+			Id:       data.ID.Hex(),
+			AuthorId: data.AuthorID,
+			Title:    data.Title,
+			Content:  data.Content,
+		})
 	}
 
 	if err = cur.Err(); err != nil {
@@ -37,7 +42,7 @@ func (s *Server) ListBlog(in *emptypb.Empty, stream pb.BlogService_ListBlogServe
 	return nil
 }
 
-func (s *Server) ListBlogRepeated(ctx context.Context, in *emptypb.Empty) (*pb.ListBlogResponse, error) {
+func (s *Server) ListBlogRepeated(ctx context.Context, in *emptypb.Empty) (*pb.ListBlogRepeatedResponse, error) {
 	log.Println("ListBlogRepeated was invoked")
 
 	var blogs []*pb.Blog
@@ -58,7 +63,7 @@ func (s *Server) ListBlogRepeated(ctx context.Context, in *emptypb.Empty) (*pb.L
 		blogs = append(blogs, documentToBlog(data))
 	}
 
-	return &pb.ListBlogResponse{
+	return &pb.ListBlogRepeatedResponse{
 		Blogs: blogs,
 	}, nil
 }

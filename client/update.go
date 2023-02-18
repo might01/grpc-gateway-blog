@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "bitbucket.com/mightnvi/grpc-blog/proto"
+	pb "bitbucket.com/mightnvi/grpc-blog/proto/blog/v1"
 	"context"
 	"log"
 )
@@ -9,7 +9,7 @@ import (
 func updateBlog(c pb.BlogServiceClient, id string) {
 	log.Printf("updateBlog was invoked with %s\n", id)
 
-	newBlog := &pb.Blog{
+	newBlog := &pb.UpdateBlogRequest{
 		Id:       id,
 		AuthorId: "test_update",
 		Title:    "test_title_update",

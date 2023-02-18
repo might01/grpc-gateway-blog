@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "bitbucket.com/mightnvi/grpc-blog/proto"
+	pb "bitbucket.com/mightnvi/grpc-blog/proto/blog/v1"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-func (s *Server) ReadBlog(ctx context.Context, in *pb.BlogId) (*pb.Blog, error) {
+func (s *Server) ReadBlog(ctx context.Context, in *pb.ReadBlogRequest) (*pb.ReadBlogResponse, error) {
 	log.Printf("ReadBlog was invoked with %v\n", in)
 
 	oid, err := primitive.ObjectIDFromHex(in.Id)
@@ -26,5 +26,9 @@ func (s *Server) ReadBlog(ctx context.Context, in *pb.BlogId) (*pb.Blog, error) 
 		return nil, status.Errorf(codes.NotFound, "Cannot find blog with ID provided")
 	}
 
-	return documentToBlog(data), nil
+	return &pb.ReadBlogResponse{
+		Id:       data.ID.Hex(),
+		AuthorId: data.AuthorID,
+		Title:    data.Title,
+		Content:  data.Content}, nil
 }
