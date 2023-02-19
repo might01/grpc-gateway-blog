@@ -1,9 +1,5 @@
 FROM golang:1.19
 
-RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 && \
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2 && \
-    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
-
 RUN  mkdir /opt/buf && cd /opt/buf && wget "https://github.com/bufbuild/buf/releases/download/v1.14.0/buf-$(uname -s)-$(uname -m).tar.gz" && \
      tar -xvzf buf-$(uname -s)-$(uname -m).tar.gz --strip-components 1
 
